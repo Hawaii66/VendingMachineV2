@@ -1,14 +1,34 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "../styles/Home.module.css";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { GetServerSideProps } from "next/types";
+import { ILocation } from "../Interface/Location";
+import { API_URL } from "../Utils/API";
 
-const inter = Inter({ subsets: ["latin"] });
+const Map = dynamic(() => import("../Components/Map"), { ssr: false });
 
-export default function Home() {
+interface Props {
+  locations: {
+    machine: number;
+    location: ILocation;
+  }[];
+}
+
+export default function Home({ locations }: Props) {
   return (
     <div>
-      <h1>What</h1>
+      <Map locations={locations} />
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<any> = async (ctx) => {
+  const res = await fetch(`${API_URL}/api/server/locations`);
+  const json = await res.json();
+
+  return {
+    props: {
+      locations: json.locations,
+    },
+  };
+};
