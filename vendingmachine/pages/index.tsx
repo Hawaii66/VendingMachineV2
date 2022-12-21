@@ -16,7 +16,15 @@ interface Props {
 
 export default function Home({ locations }: Props) {
   return (
-    <div>
+    <div className="flex justify-around items-center flex-col min-h-screen w-full">
+      <div className="my-10">
+        <h1 className="w-full text-center font-mono text-orange-500 font-extrabold text-5xl mb-0">
+          HawaiiDev Snacks
+        </h1>
+        <h2 className="w-full text-center font-mono text-green-600 font-bold text-3xl">
+          Godis på sekunder
+        </h2>
+      </div>
       <Map locations={locations} />
     </div>
   );
