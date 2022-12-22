@@ -2,6 +2,7 @@ from servo_com import ServoMotor
 import requests
 import json
 from time import sleep
+from fetch import fetch_spin
 
 def home_servos(servos):
 	for servo in servos:
@@ -17,15 +18,8 @@ servos = [
 home_servos(servos)
 
 while True:
-	try:
-		res = requests.get("http://192.168.1.35:3000/api/raspberry/get",timeout=5)
-	except:
-		print("Not working")
-		sleep(5)
-		continue
-	response = json.loads(res.text)
-	if response["spin"] == -1:
-		sleep(1)
-		continue
-	servos[0].next_slot()
-	
+	spin = fetch_spin()
+	if spin != -1:
+		if spin < len(servos) and spin >= 0:
+			success = servos[spin].next_slot()
+			print(success)
