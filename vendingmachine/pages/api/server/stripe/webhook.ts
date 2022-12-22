@@ -45,12 +45,13 @@ export default async function handler(
   const url = t.data.object.success_url;
   console.log(url);
 
-  const test = new URLSearchParams(url);
-
   await connect();
 
-  const machineID = test.get("machine") || "-1";
-  const candyID = test.get("candy") || "-1";
+  const params = new URL(url).searchParams;
+  console.log(params);
+
+  const machineID = params.get("machine") || "-1";
+  const candyID = params.get("candy") || "-1";
   if (machineID === "-1") {
     console.log("No machine id", url);
     return;
