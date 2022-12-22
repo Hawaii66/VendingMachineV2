@@ -46,14 +46,23 @@ export default async function handler(
   console.log(url);
 
   const test = new URLSearchParams(url);
-  console.log(test.get("machine"), test.get("candy"));
 
   await connect();
 
+  const machineID = test.get("machine") || "-1";
+  const candyID = test.get("candy") || "-1";
+  if (machineID === "-1") {
+    console.log("No machine id", url);
+    return;
+  } else if (candyID === "-1") {
+    console.log("No candy id", url);
+    return;
+  }
+
   await Raspberry.insertMany([
     {
-      machine: parseInt(test.get("machine") || "-1"),
-      candy: parseInt(test.get("candy") || "-1"),
+      machine: parseInt(machineID),
+      candy: parseInt(candyID),
     },
   ]);
 
