@@ -35,36 +35,27 @@ export default async function handler(
       webhookSecret?.toString() || ""
     );
   } catch (err: any) {
-    console.log(err);
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
 
-  console.log("Recived event", event);
-
   const t: any = event;
   const url = t.data.object.success_url;
-  console.log(url);
 
   await connect();
 
   const params = new URL(url).searchParams;
-  console.log(params);
 
   const machineID = params.get("machine") || "-1";
   const candyID = params.get("candy") || "-1";
   if (machineID === "-1") {
-    console.log("No machine id", url);
     return;
   } else if (candyID === "-1") {
-    console.log("No candy id", url);
     return;
   }
 
   const machine = await GetMachine(parseInt(machineID));
   const candyIndex = machine.slots.find((i) => i.candy.name === candyID)?.index;
-
-  console.log(machineID, candyID);
 
   await Raspberry.insertMany([
     {
@@ -72,6 +63,8 @@ export default async function handler(
       candy: candyIndex,
     },
   ]);
+
+  console.log("ADDED ONE");
 
   res.status(200).end();
 }
