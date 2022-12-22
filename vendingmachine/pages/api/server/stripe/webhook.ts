@@ -58,11 +58,12 @@ export default async function handler(
     console.log("No candy id", url);
     return;
   }
+  console.log(machineID, candyID);
 
   await Raspberry.insertMany([
     {
-      machine: parseInt(machineID),
-      candy: parseInt(candyID),
+      machine: parseInt(machineID.toString()),
+      candy: parseInt(candyID.toString()),
     },
   ]);
 
