@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import { buffer } from "micro";
 import { Raspberry } from "../../../../Schemas/Raspberry";
 import { connect } from "../../../../Utils/Server/DBConnection";
+import { GetMachine } from "../../../../Utils/Server/GetMachine";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2022-11-15",
@@ -59,12 +60,16 @@ export default async function handler(
     console.log("No candy id", url);
     return;
   }
+
+  const machine = await GetMachine(parseInt(machineID));
+  const candyIndex = machine.slots.find((i) => i.candy.name === candyID)?.index;
+
   console.log(machineID, candyID);
 
   await Raspberry.insertMany([
     {
       machine: parseInt(machineID.toString()),
-      candy: parseInt(candyID.toString()),
+      candy: candyIndex,
     },
   ]);
 
