@@ -56,7 +56,7 @@ export default async function handler(
           },
         ],
         mode: "payment",
-        success_url: `${req.headers.origin}/confirm?machine=${
+        success_url: `${req.headers.origin}/confirm?info=-1&machine=${
           machine.id
         }&candy=${
           machine.slots[info.candy].candy.name

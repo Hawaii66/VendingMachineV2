@@ -2,6 +2,8 @@ import { request } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { buffer } from "micro";
+import { Raspberry } from "../../../../Schemas/Raspberry";
+import { connect } from "../../../../Utils/Server/DBConnection";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2022-11-15",
@@ -45,6 +47,15 @@ export default async function handler(
 
   const test = new URLSearchParams(url);
   console.log(test.get("machine"), test.get("candy"));
+
+  await connect();
+
+  await Raspberry.insertMany([
+    {
+      machine: parseInt(test.get("machine") || "-1"),
+      candy: parseInt(test.get("candy") || "-1"),
+    },
+  ]);
 
   res.status(200).end();
 }
