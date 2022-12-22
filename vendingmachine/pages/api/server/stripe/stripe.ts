@@ -56,7 +56,11 @@ export default async function handler(
           },
         ],
         mode: "payment",
-        success_url: `${req.headers.origin}/confirm?success=true&success_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${req.headers.origin}/confirm?machine=${
+          machine.id
+        }&candy=${
+          machine.slots[info.candy].candy.name
+        }&success=true&success_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/confirm?cancel=true`,
         automatic_tax: { enabled: true },
         currency: "SEK",

@@ -39,5 +39,12 @@ export default async function handler(
 
   console.log("Recived event", event);
 
+  const t: any = event;
+  const url = t.data.object.success_url;
+  console.log(url);
+
+  const test = new URLSearchParams(url);
+  console.log(test.get("machine"), test.get("candy"));
+
   res.status(200).end();
 }
