@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { IMachine } from "../../../../Interface/Machine";
 import { connect } from "../../../../Utils/Server/DBConnection";
+import { DecreaseStock } from "../../../../Utils/Server/DecreaseStock";
 import { GetMachine } from "../../../../Utils/Server/GetMachine";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -65,8 +66,10 @@ export default async function handler(
         automatic_tax: { enabled: true },
         currency: "SEK",
       });
+
       res.json({ url: session.url });
     } catch (err: any) {
+      console.log(err);
       res.status(err.statusCode || 500).json(err.message);
     }
   } else {

@@ -5,6 +5,7 @@ import { buffer } from "micro";
 import { Raspberry } from "../../../../Schemas/Raspberry";
 import { connect } from "../../../../Utils/Server/DBConnection";
 import { GetMachine } from "../../../../Utils/Server/GetMachine";
+import { DecreaseStock } from "../../../../Utils/Server/DecreaseStock";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2022-11-15",
@@ -55,7 +56,8 @@ export default async function handler(
   }
 
   const machine = await GetMachine(parseInt(machineID));
-  const candyIndex = machine.slots.find((i) => i.candy.name === candyID)?.index;
+  const candyIndex =
+    machine.slots.find((i) => i.candy.name === candyID)?.index || -1;
 
   await Raspberry.insertMany([
     {
@@ -64,7 +66,7 @@ export default async function handler(
     },
   ]);
 
-  console.log("ADDED ONE");
+  await DecreaseStock(machine.id, candyIndex);
 
   res.status(200).end();
 }

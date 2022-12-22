@@ -9,9 +9,10 @@ import { GetMachine } from "../../Utils/Server/GetMachine";
 interface Props {
   machine: IMachine;
   index: number;
+  nostock: boolean;
 }
 
-function confirm({ machine, index }: Props) {
+function confirm({ machine, index, nostock }: Props) {
   const submitPayment = async () => {
     const url = `/api/server/stripe/stripe`;
     const data = JSON.stringify({
@@ -27,6 +28,49 @@ function confirm({ machine, index }: Props) {
     });
     window.location.href = (await result.json()).url;
   };
+
+  if (nostock === true) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <div className="w-full md:w-4/5 xl:w-1/3 flex justify-center items-center flex-col gap-5 ">
+          <h1 className="text-center font-mono text-orange-500 text-5xl font-extrabold">
+            Varan är slut
+          </h1>
+          <table className="w-4/5 md:w-1/3 xl:w-2/4">
+            <tbody className="gap-5 flex flex-col">
+              <tr>
+                <td className="pr-5">
+                  <h2 className="text-left font-mono font-extrabold text-3xl text-neutral-600">
+                    Name
+                  </h2>
+                </td>
+                <td className="">
+                  <p className="text-left font-mono font-bold text-2xl text-neutral-400">
+                    {machine.slots[index].candy.name}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td className="pr-5">
+                  <h2 className="text-left font-mono font-extrabold text-3xl text-neutral-600">
+                    Pris
+                  </h2>
+                </td>
+                <td className="">
+                  <p className="text-left font-mono font-bold text-2xl text-neutral-400">
+                    {machine.slots[index].candy.price} kr
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <Button link={`/machine?id=${machine.id}`} small>
+            Tillbaka
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center">
@@ -74,6 +118,7 @@ function confirm({ machine, index }: Props) {
 export const getServerSideProps: GetServerSideProps<{
   machine: IMachine;
   index: number;
+  nostock?: boolean;
 }> = async (ctx) => {
   if (ctx.query.success) {
     return {
@@ -131,6 +176,16 @@ export const getServerSideProps: GetServerSideProps<{
     lon: 0,
     name: "",
   };
+
+  if (slots[parseInt(ctx.query.candy)].stock < 1) {
+    return {
+      props: {
+        nostock: true,
+        index: parseInt(ctx.query.candy),
+        machine: machine,
+      },
+    };
+  }
 
   return {
     props: {
